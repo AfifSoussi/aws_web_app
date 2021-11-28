@@ -4,14 +4,28 @@ this project goal is to deploy automatically a web application on AWS using Terr
 the module will be independent and can be run on any account. 
 i will add a terraform script around and a pipeline to deploy on my dev account.
 
+## Architecture
+![services and topologie](/architecture/images/arch.png "services and topologie")
 ## file structure :
 
--main.tf
--elastic_web_app/
+    -main.tf
+
+    -elastic_web_app/
+
             -network.tf
+
             -compute.tf
+
             -webapp.tf
 
+
+## methodologie :
+it's important to decompose the tasks into smaller parts, and do small inceremental deployments,
+while testing the functionnalities newely introduced. 
+eg : after deploying the networking infrastructure, i deploy 2 VMs (private +ELB / public) with a basic web server.
+it allows to verify the E2E reachiblity with minimal testing efforts, before adding autoscaling. EFS, encryption etc...
+
+![succesfull deployment](/architecture/images/network-server-test.png "succesfull deployment")
 
 ## steps :
 
@@ -26,7 +40,7 @@ i will add a terraform script around and a pipeline to deploy on my dev account.
 -- create private subnet
 -- create 2 route tables
 -- associate subnets with route tables
-
+- (deploy quickly 2 ec2 instances to test connectivity)
 - create EFS 
 -- encrypted
 --  dynamic elasticity
