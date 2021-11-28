@@ -3,14 +3,30 @@ this project goal is to deploy automatically a web application on AWS using Terr
 ## Module :
 the module will be independent and can be run on any account. 
 i will add a terraform script around and a pipeline to deploy on my dev account.
+
+## file structure :
+
+-main.tf
+-elastic_web_app/
+            -network.tf
+            -compute.tf
+            -webapp.tf
+
+
 ## steps :
 
 - install Terraform v12
 - create TF wrapper for the module
 - create TF module (independent)
-- Create VPC
+-prepare network infrastructure
+-- Create VPC
+-- create an internet gateway (contact internet , public)
+-- create a NAT gateway (ec2 IPs, private)
 -- create public subnet
 -- create private subnet
+-- create 2 route tables
+-- associate subnets with route tables
+
 - create EFS 
 -- encrypted
 --  dynamic elasticity

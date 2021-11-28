@@ -20,3 +20,4 @@ provider "aws" {
   shared_credentials_file = "C:/Users/Soussi/.aws/credentials"
 }
 
+
