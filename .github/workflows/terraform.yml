@@ -46,7 +46,7 @@ jobs:
 
     # Generates an execution plan for Terraform
     - name: Terraform destroy
-      run: terraform destroy
+      run: terraform destroy -auto-approve
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         TF_ACTION_WORKING_DIR: '.'
@@ -67,7 +67,7 @@ jobs:
 
     # apply changes
     - name: Terraform apply
-      run: terraform apply
+      run: terraform apply -auto-approve
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         TF_ACTION_WORKING_DIR: '.'
