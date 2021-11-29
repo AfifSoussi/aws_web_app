@@ -12,6 +12,7 @@ resource "aws_vpc" "vpc" {
 /* Public subnet */
 resource "aws_subnet" "public_subnet" {
   vpc_id                  = aws_vpc.vpc.id
+  availability_zone       = "eu-central-1a" 
   cidr_block              = var.public_subnets_cidr
   map_public_ip_on_launch = true
   tags = {
@@ -55,6 +56,7 @@ resource "aws_route_table_association" "public" {
 /* Private subnet */
 resource "aws_subnet" "private_subnet" {
   vpc_id                  = aws_vpc.vpc.id
+  availability_zone       = "eu-central-1a" 
   cidr_block              = var.private_subnets_cidr
   map_public_ip_on_launch = true
   tags = {
