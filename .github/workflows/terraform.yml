@@ -32,11 +32,7 @@ jobs:
     - name: Terraform version
       run: terraform --version
       
-    - name: Terraform init bash
-      run: terraform init
-      continue-on-error: true
-      
-    - name: Terraform init bash
+    - name: Terraform init
       run: terraform init
       continue-on-error: true
       env:
@@ -45,17 +41,8 @@ jobs:
         AWS_ACCESS_KEY_ID:  ${{ secrets.AWS_ACCESS_KEY_ID }}
         AWS_SECRET_ACCESS_KEY:  ${{ secrets.AWS_SECRET_ACCESS_KEY }}
 
-      
-    - name: Terraform Init
-      uses: hashicorp/terraform-github-actions/init@v0.4.0
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        TF_ACTION_WORKING_DIR: '.'
-        AWS_ACCESS_KEY_ID:  ${{ secrets.AWS_ACCESS_KEY_ID }}
-        AWS_SECRET_ACCESS_KEY:  ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        
     - name: Terraform Validate
-      uses: hashicorp/terraform-github-actions/validate@v0.3.7
+      run: terraform validate
 
     # Checks that all Terraform configuration files adhere to a canonical format
     - name: Terraform Format
