@@ -2,7 +2,24 @@
 this project goal is to deploy automatically a web application on AWS using Terraform
 ## Module :
 the module will be independent and can be run on any account. 
-i will add a terraform script around and a pipeline to deploy on my dev account.
+i added terraform bootstrap script around and a pipeline to deploy on my aws account.
+it's called in this way, the variable used can be passed after the "source", to define the subnets
+and region/AZ, plus a prefix to the resources. the output is the DNS hostname used to access the web app.
+
+```sh
+module "elastic-web-app" {
+    source = "./elastic-web-app"
+    vpc_cidr = "10.0.0.0/16"
+    public_subnets_cidr =  "10.0.0.0/24"
+    private_subnets_cidr = "10.0.1.0/24"
+    environment = "dev"
+    availability_zone = "eu-central-1a"
+
+}
+output "Load-Balancer-Hostname" {
+  value =    module.elastic-web-app.Load-Balancer-Hostname
+}
+```
 
 ## Architecture
 ![services and topologie](/architecture/images/arch.png "services and topologie")
@@ -10,13 +27,17 @@ i will add a terraform script around and a pipeline to deploy on my dev account.
 
     -main.tf
 
-    -elastic_web_app/
+    -elastic_web_app/  ==> module folder
 
-            -network.tf
+            -network.tf  ==> VPC and subnets
 
-            -compute.tf
+            -compute.tf  ==>LB, EC2 and autoscaling
 
-            -webapp.tf
+            -rules.tf  ==> the ports whitelisting
+            
+            -unused.tf  ==> solution work in progress
+
+            -vars.tf  ==> variables used in the module
 
 
 ## methodologies :
@@ -52,10 +73,8 @@ it can be helpful to destroy manually and re-apply with Terraform few times. som
 --> install a web server
 --> create a simple webpage
 - (deploy quickly 2 ec2 instances to test connectivity)
-- Create EBS for linux EC2 (encrypted)
-- create EFS for Logs (encrypted/elastic)
-- create a launch config or template on aws
-- create autoscaling group
+- create a launch config for ASG
+--> create autoscaling group
 --> use linux AMI to scaling
 --> create second volume * vms and mount /var/log
 - create Cloudwatch integration/alarm

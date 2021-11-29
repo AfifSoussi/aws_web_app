@@ -31,8 +31,6 @@ resource "aws_elb" "elb-public" {
 }
 
 
-
-
 #Create Launch config
 resource "aws_launch_configuration" "launch-config" {
   name_prefix   = "${var.environment}-launch-config"
@@ -43,8 +41,15 @@ resource "aws_launch_configuration" "launch-config" {
   security_groups = ["${aws_security_group.webserver-sg.id}"]
     root_block_device {
             volume_type = "gp2"
-            volume_size = 10
+            volume_size = 20
             encrypted   = true
+        }
+    ebs_block_device {
+           device_name = "/dev/sdg"
+            volume_type = "standard"
+            volume_size = 30
+            encrypted   = true
+           delete_on_termination = false
         }
 lifecycle {
         create_before_destroy = true
@@ -81,47 +86,8 @@ resource "aws_autoscaling_attachment" "attach-ELB-ASG" {
   depends_on   = [aws_elb.elb-public]
 }
 
-/*  not used anymore, ASG attached to ELB 
-# Create Target group
-resource "aws_lb_target_group" "target-group" {
-  name       = "${var.environment}-target-group"
-  target_type = "instance"
-  depends_on = [aws_vpc.vpc]
-  port     = 80
-  protocol = "HTTP"
-  vpc_id   = aws_vpc.vpc.id
-  health_check {
-    interval            = 70
-    path                = "/index.html"
-    port                = 80
-    healthy_threshold   = 2
-    unhealthy_threshold = 2
-    timeout             = 60 
-    protocol            = "HTTP"
-    matcher             = "200,202"
-  }
-}
-*/
-
-#a server in the private subnet with a load balancer
-#used only for troubleshooting 
-/*
-resource "aws_instance" "test-private-server" {
-	instance_type = "t2.nano"
-  ami = "ami-0bd99ef9eccfee250"
-	security_groups = [aws_security_group.webserver-sg.id]
-	subnet_id = aws_subnet.private_subnet.id
-  availability_zone       = "eu-central-1a" 
-	user_data = file("${path.module}/install_httpd.sh")
-    tags = {
-    Name = "${var.environment}-private-vm"
-    Environment = var.environment
-    Access = "private"
-  }
-}
-
-*/
 
 output "Load-Balancer-Hostname" {
   value = aws_elb.elb-public.dns_name
 }
+

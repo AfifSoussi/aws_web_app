@@ -14,8 +14,13 @@ variable "private_subnets_cidr" {
   default = "10.0.1.0/24"
 }
 
-
 variable "environment" {
   description = "to deploy multiple times"
   default = "dev"
+}
+
+
+variable "availability_zone" {
+  description = "az to use"
+  default = "eu-central-1a"
 }
