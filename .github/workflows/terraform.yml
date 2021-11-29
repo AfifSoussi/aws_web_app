@@ -44,11 +44,11 @@ jobs:
     - name: Terraform Validate
       run: terraform validate
 
-    # Checks that all Terraform configuration files adhere to a canonical format
-    - name: Terraform Format
-      run: terraform fmt -check
-
     # Generates an execution plan for Terraform
+    - name: Terraform plan
+      run: terraform plan
+
+    # apply changes
     - name: Terraform apply
       run: terraform apply
 
