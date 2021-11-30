@@ -30,7 +30,6 @@ resource "aws_elb" "elb-public" {
   }
 }
 
-
 #Create Launch config
 resource "aws_launch_configuration" "launch-config" {
   name_prefix   = "${var.environment}-launch-config"

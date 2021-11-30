@@ -2,14 +2,14 @@ name: 'Terraform deploy to AWS'
 
 on:
   push:
-    branches:
-    - main
+    branches: [main, pipeline-fix]
   pull_request:
 
 jobs:
   terraform_apply:
     name: 'Terraform'
     runs-on: ubuntu-latest
+    timeout-minutes: 40
     environment: production
 
     # Use the Bash shell regardless whether the GitHub Actions runner is ubuntu-latest, macos-latest, or windows-latest
@@ -33,24 +33,46 @@ jobs:
     - name: Terraform version
       run: terraform --version
       
-    - name: Terraform Init
-      uses: hashicorp/terraform-github-actions/init@v0.4.0
+    - name: Terraform init
+      run: terraform init
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        TF_ACTION_WORKING_DIR: '.'
+        AWS_ACCESS_KEY_ID:  ${{ secrets.AWS_ACCESS_KEY_ID }}
+        AWS_SECRET_ACCESS_KEY:  ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+
+    - name: Terraform Validate
+      run: terraform validate
+
+    # Generates an execution plan for Terraform
+    - name: Terraform destroy
+      run: terraform destroy -auto-approve
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         TF_ACTION_WORKING_DIR: '.'
         AWS_ACCESS_KEY_ID:  ${{ secrets.AWS_ACCESS_KEY_ID }}
         AWS_SECRET_ACCESS_KEY:  ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         
-    - name: Terraform Validate
-      uses: hashicorp/terraform-github-actions/validate@v0.3.7
-
-    # Checks that all Terraform configuration files adhere to a canonical format
-    - name: Terraform Format
-      run: terraform fmt -check
-
+    - name: wait 2 minutes for refresh
+      run: sleep 120
+      
     # Generates an execution plan for Terraform
+    - name: Terraform plan
+      run: terraform plan
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        TF_ACTION_WORKING_DIR: '.'
+        AWS_ACCESS_KEY_ID:  ${{ secrets.AWS_ACCESS_KEY_ID }}
+        AWS_SECRET_ACCESS_KEY:  ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+
+    # apply changes
     - name: Terraform apply
-      run: terraform apply
+      run: terraform apply -auto-approve
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        TF_ACTION_WORKING_DIR: '.'
+        AWS_ACCESS_KEY_ID:  ${{ secrets.AWS_ACCESS_KEY_ID }}
+        AWS_SECRET_ACCESS_KEY:  ${{ secrets.AWS_SECRET_ACCESS_KEY }}
 
       # On push to main, build or change infrastructure according to Terraform configuration files
       # Note: It is recommended to set up a required "strict" status check in your repository for "Terraform Cloud". See the documentation on "strict" required status checks for more information: https://help.github.com/en/github/administering-a-repository/types-of-required-status-checks
